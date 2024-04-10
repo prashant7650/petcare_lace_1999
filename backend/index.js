@@ -1,5 +1,6 @@
 const express = require("express")
 const {connection}=require("./db")
+const {userRouter}=require("./Route/user.route")
 const app=express()
 
 app.use(express.json())
@@ -7,6 +8,7 @@ app.use(express.json())
 app.get("/",(req,res)=>{
     res.send("welcome to the petcare website")
 })
+app.use("users",userRouter)
 
 app.listen(8500, async(req,res)=>{
     try{
