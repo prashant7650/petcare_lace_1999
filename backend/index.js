@@ -1,23 +1,38 @@
 const express = require("express")
-const {connection}=require("./db")
-const {userRouter}=require("./Route/user.route")
-const app=express()
-
+const cors = require("cors")
+require("dotenv").config()
+const port = process.env.PORT
+const cookiParser = require("cookie-parser");
+const app = express()
+const bodyParser = require('body-parser');
 app.use(express.json())
- 
-app.get("/",(req,res)=>{
-    res.send("welcome to the petcare website")
-})
-app.use("users",userRouter)
+app.use(cors())
+const { BookingRoute } = require("./routes/Booking")
+const { DataBase } = require("./DBconnection")
+const { Payment } = require("./routes/payment")
+const userrouter = require("./routes/user.router")
+const doctorroute = require("./routes/doctor.route")
+const auth = require("./middleware/auth")
 
-app.listen(8500, async(req,res)=>{
-    try{
-        await connection
-        console.log("connected to the database")
-        console.log("port is running on server 8500")
-    }catch(err){
-        console.log(err)
-        console.log("cannot connected")
+app.use(cookiParser());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use("/user", userrouter)
+app.use("/doctor", doctorroute)
+app.use("/appointment", BookingRoute)
+app.use("/petcare", Payment)
+
+
+
+
+app.listen(port, () => {
+    try {
+        DataBase()
+        console.log(`Server is running on port ${port}`)
+    } catch (error) {
+        console.error(error)
     }
-    console.log("port is running on server 8500")
+
 })
+
+
